@@ -11,10 +11,23 @@ fi
 PATCH="$BASE/patches/oc_c5_patches"
 KS="$BASE/klipperscreen/oc_klipperscreen"
 LED="$BASE/led/oc_led"
+TG="$BASE/telegram/oc_telegram"
 
 run_group() {
     local action="$1" group="$2"
     /bin/bash "$group.$action.sh"
+}
+
+run_optional_group() {
+    local group="$1" config="$2" name="$3"
+
+    if [ -f "$config" ]; then
+        echo "$name configuration found. Installing group."
+        run_group install "$group"
+    else
+        echo "$name configuration not found. Disabling group."
+        run_group uninstall "$group"
+    fi
 }
 
 while true; do
@@ -31,6 +44,8 @@ while true; do
     echo "6) Uninstall PATCH"
     echo "7) Uninstall KLIPPERSCREEN"
     echo "8) Uninstall LED"
+    echo "9) Install TELEGRAM"
+    echo "10) Uninstall TELEGRAM"
     echo "0) Exit"
     echo
     read -rp "Selection: " choice
@@ -38,11 +53,14 @@ while true; do
     case "$choice" in
         1)
             run_group install "$PATCH"
-            run_group install "$KS"
+            run_optional_group "$KS" "$CONFIG_DIR/KlipperScreen.conf" "KlipperScreen"
             run_group install "$LED"
+            run_optional_group "$TG" "$CONFIG_DIR/telegram.conf" "Telegram"
             ;;
         2) run_group install "$PATCH" ;;
-        3) run_group install "$KS" ;;
+        3)
+            run_optional_group "$KS" "$CONFIG_DIR/KlipperScreen.conf" "KlipperScreen"
+            ;;
         4) run_group install "$LED" ;;
         5)
             read -rp "Uninstall all groups? Type REMOVE: " confirm
@@ -50,6 +68,7 @@ while true; do
                 echo "Cancelled."
                 continue
             }
+            run_group uninstall "$TG"
             run_group uninstall "$LED"
             run_group uninstall "$KS"
             run_group uninstall "$PATCH"
@@ -67,6 +86,14 @@ while true; do
         8)
             read -rp "Uninstall LED? Type REMOVE: " confirm
             [ "$confirm" = REMOVE ] && run_group uninstall "$LED" ||
+                echo "Cancelled."
+            ;;
+        9)
+            run_optional_group "$TG" "$CONFIG_DIR/telegram.conf" "Telegram"
+            ;;
+        10)
+            read -rp "Uninstall TELEGRAM watcher? Type REMOVE: " confirm
+            [ "$confirm" = REMOVE ] && run_group uninstall "$TG" ||
                 echo "Cancelled."
             ;;
         0) exit 0 ;;
