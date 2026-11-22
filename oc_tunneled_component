@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "id": "oc_c5_patches",
+  "name": "OpenCreator C5 Patches",
+  "description": "Creator 5 compatibility patches and integrations",
+  "author": "pappicio",
+  "components": [
+    "klipperscreen",
+    "led",
+    "patches",
+    "telegram"
+  ]
+}
