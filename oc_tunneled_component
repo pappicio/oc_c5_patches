@@ -4,6 +4,7 @@
   "name": "OpenCreator C5 Patches",
   "description": "Creator 5 compatibility patches and integrations",
   "author": "pappicio",
+  "repository": "https://github.com/pappicio/oc_c5_patches",
   "components": [
     "klipperscreen",
     "led",
